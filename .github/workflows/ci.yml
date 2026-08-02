@@ -54,6 +54,29 @@ jobs:
         env:
           PGHOST: localhost
 
+      - name: Start RAG Core
+        working-directory: ./rag-core
+        run: nohup uvicorn app:app --host 0.0.0.0 --port 8000 > rag-core.log 2>&1 &
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      - name: Start Gateway
+        working-directory: ./gateway
+        run: nohup uvicorn app:app --host 0.0.0.0 --port 8001 > gateway.log 2>&1 &
+
+      - name: Wait for services to be ready
+        run: |
+          for i in {1..15}; do
+            curl -sf http://localhost:8000/health && echo "RAG Core is up" && break
+            echo "Waiting for RAG Core..."
+            sleep 2
+          done
+          for i in {1..15}; do
+            curl -sf http://localhost:8001/health && echo "Gateway is up" && break
+            echo "Waiting for Gateway..."
+            sleep 2
+          done
+
       - name: Run full test suite
         run: pytest tests/ -v
         env:
