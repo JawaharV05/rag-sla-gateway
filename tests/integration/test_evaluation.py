@@ -2,7 +2,7 @@ import httpx
 import pytest
 
 GATEWAY_URL = "http://127.0.0.1:8001"
-ADMIN_KEY = "admin-key-789"  # admin_tool never degrades, ideal for checking real AI answers
+ADMIN_KEY = "web-key-456"  # admin_tool never degrades, ideal for checking real AI answers
 
 # Each entry: (question, required_keywords_that_must_appear_in_the_answer)
 GOLDEN_SET = [
