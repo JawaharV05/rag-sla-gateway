@@ -77,6 +77,15 @@ jobs:
             sleep 2
           done
 
+      - name: Warm up the embedding model
+        run: |
+          echo "Sending a warm-up request to force the embedding model to fully load..."
+          curl -sf -X POST http://localhost:8000/retrieve \
+            -H "Content-Type: application/json" \
+            -d '{"question": "warm up", "top_k": 1}' \
+            --max-time 60
+          echo "Warm-up complete."
+
       - name: Run full test suite
         run: pytest tests/ -v
         env:

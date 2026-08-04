@@ -33,7 +33,7 @@ async def worker_loop():
         r.setex(f"{RESULT_KEY_PREFIX}{request_id}", RESULT_TTL_SECONDS, json.dumps(result))
 
 
-async def submit_and_wait(client_id: str, question: str, top_k: int, max_wait_seconds: float = 10.0):
+async def submit_and_wait(client_id: str, question: str, top_k: int, max_wait_seconds: float = 30.0):
     """
     Enqueues a request and waits for the worker to produce a result.
     """
