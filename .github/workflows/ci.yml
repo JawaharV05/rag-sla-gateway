@@ -80,11 +80,17 @@ jobs:
       - name: Warm up the embedding model
         run: |
           echo "Sending a warm-up request to force the embedding model to fully load..."
-          curl -sf -X POST http://localhost:8000/retrieve \
+          curl -s -X POST http://localhost:8000/retrieve \
             -H "Content-Type: application/json" \
             -d '{"question": "warm up", "top_k": 1}' \
-            --max-time 60
+            --max-time 60 \
+            -w "\nHTTP Status: %{http_code}\n"
           echo "Warm-up complete."
+
+      - name: Show RAG Core logs if warm-up had issues
+        if: always()
+        working-directory: ./rag-core
+        run: cat rag-core.log || echo "No log file found"
 
       - name: Run full test suite
         run: pytest tests/ -v
